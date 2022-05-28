@@ -127,11 +127,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 
 			Block block = e.getBlock();
 			
-			if (!LocationTool.isIn(pos1, block.getLocation(), pos2)) {
-				return;
-			}
-			
-			if (!LocationTool.isIn(pos3, block.getLocation(), pos4)) {
+			if (!LocationTool.isIn(pos1, block.getLocation(), pos2) || LocationTool.isIn(pos3, block.getLocation(), pos4)) {
 				return;
 			}
 
