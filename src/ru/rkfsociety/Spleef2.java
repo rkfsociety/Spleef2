@@ -25,18 +25,8 @@ import com.wbm.plugin.util.SoundTool;
 import com.worldbiomusic.minigameworld.minigameframes.SoloBattleMiniGame;
 import com.worldbiomusic.minigameworld.minigameframes.helpers.MiniGameCustomOption.Option;
 
-/**
- * Spleef <br>
- * - SoloBattle <br>
- * - Check fallen from floor with timer task<br>
- * - Player will fall if below of y of custom-data.pos2<br>
- * - Gets score when break a block <br>
- * - Can set floor area with custom-data <br>
- * - Can set block, tool with custom-data <br>
- * - Fill floor in initGame() <br>
- * - PVP off <br>
- *
- */
+
+
 public class Spleef2 extends SoloBattleMiniGame {
 
 	private Material block;
