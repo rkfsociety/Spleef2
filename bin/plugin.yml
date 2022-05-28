@@ -1,0 +1,7 @@
+name: Spleef2
+version: 1.0
+main: ru.rkfsociety.Spleef2Main
+api-version: 1.18
+
+# THIS !
+depend: [MiniGameWorld]
