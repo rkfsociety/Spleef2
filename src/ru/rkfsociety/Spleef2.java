@@ -161,6 +161,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 	
 	@Override
 	protected void initGame() {
+		walls(pos1, pos4.clone().add(0, 5, 0), block);
 		fillStage1();
 		fillStage2();
 	}
