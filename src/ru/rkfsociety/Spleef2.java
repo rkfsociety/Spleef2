@@ -39,7 +39,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 
 	private Material block;
 	private Material tool;
-	private Location pos1, pos2, pos3, pos4;
+	private Location floorpos1, floorpos2, floorpos3, floorpos4;
 
 	public Spleef2() {
 		super("Spleef2", 2, 10, 300, 20);
@@ -67,10 +67,10 @@ public class Spleef2 extends SoloBattleMiniGame {
 		Map<String, Object> data = getCustomData();
 		data.put("floorblock", Material.SNOW_BLOCK.name()); // Напольные блоки
 		data.put("tool", Material.STONE_SHOVEL.name()); // Предмет выдаваемый игроку
-		data.put("pos1", getLocation());
-		data.put("pos2", getLocation());
-		data.put("pos3", getLocation());
-		data.put("pos4", getLocation());
+		data.put("floorpos1", getLocation()); // пол
+		data.put("floorpos2", getLocation()); // пол
+		data.put("floorpos3", getLocation()); // пол
+		data.put("floorpos4", getLocation()); // пол
 	}
 
 	@Override
@@ -80,10 +80,10 @@ public class Spleef2 extends SoloBattleMiniGame {
 		Map<String, Object> data = getCustomData();
 		this.block = Material.valueOf((String) data.get("floorblock")); // Напольные блоки
 		this.tool = Material.valueOf((String) data.get("tool")); // Предмет выдаваемый игроку
-		this.pos1 = (Location) data.get("pos1");
-		this.pos2 = (Location) data.get("pos2");
-		this.pos3 = (Location) data.get("pos3");
-		this.pos4 = (Location) data.get("pos4");
+		this.floorpos1 = (Location) data.get("floorpos1"); // пол
+		this.floorpos2 = (Location) data.get("floorpos2"); // пол
+		this.floorpos3 = (Location) data.get("floorpos3"); // пол
+		this.floorpos4 = (Location) data.get("floorpos4"); // пол
 	}
 
 	@Override
@@ -93,18 +93,22 @@ public class Spleef2 extends SoloBattleMiniGame {
 		getTaskManager().runTaskTimer("check-fallen", 0, 10);
 		InventoryTool.addItemToPlayers(getPlayers(), new ItemStack(this.tool));
 	}
-
-	private void fillStage1() {
-		BlockTool.fillBlockWithMaterial(pos1, pos2, block);
+	
+	private void fillWall1() {
+		BlockTool.fillBlockWithMaterial(floorpos1, floorpos3, block);
 	}
 	
-	private void fillStage2() {
-		BlockTool.fillBlockWithMaterial(pos3, pos4, block);
+	private void fillStage1() { // Заполнитель 1 этаж
+		BlockTool.fillBlockWithMaterial(floorpos1, floorpos2, block);
+	}
+	
+	private void fillStage2() { // Заполнитель 2 этаж
+		BlockTool.fillBlockWithMaterial(floorpos3, floorpos4, block);
 	}
 
 
 	private void checkFallenFromFloor(Player p) {
-		double bottomY = this.pos2.getY();
+		double bottomY = this.floorpos2.getY();
 		double playerY = p.getLocation().getY();
 
 		if (playerY <= bottomY) {
@@ -119,6 +123,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 	protected void initGame() {
 		fillStage1();
 		fillStage2();
+		fillWall1();
 	}
 	@Override
 	protected void onEvent(Event event) { // Отслеживание поломки
@@ -127,7 +132,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 
 			Block block = e.getBlock();
 			
-			if(!(LocationTool.isIn(pos1, block.getLocation(), pos2) || LocationTool.isIn(pos3, block.getLocation(), pos4))) {
+			if(!(LocationTool.isIn(floorpos1, block.getLocation(), floorpos2) || LocationTool.isIn(floorpos3, block.getLocation(), floorpos4))) {
 				  return;
 				}
 
