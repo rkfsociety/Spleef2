@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import com.wbm.plugin.util.BlockTool;
 import com.wbm.plugin.util.InventoryTool;
 import com.wbm.plugin.util.LocationTool;
+import com.wbm.plugin.util.MathTool;
 import com.wbm.plugin.util.ParticleTool;
 import com.wbm.plugin.util.SoundTool;
 import com.worldbiomusic.minigameworld.minigameframes.SoloBattleMiniGame;
@@ -39,7 +41,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 
 	private Material block;
 	private Material tool;
-	private Location floorpos1, floorpos2, floorpos3, floorpos4;
+	private Location pos1, pos2, pos3, pos4;
 
 	public Spleef2() {
 		super("Spleef2", 2, 10, 300, 20);
@@ -53,6 +55,8 @@ public class Spleef2 extends SoloBattleMiniGame {
 
 		registerTask();
 	}
+	
+
 
 	private void registerTask() {
 		getTaskManager().registerTask("check-fallen", () -> {
@@ -65,12 +69,12 @@ public class Spleef2 extends SoloBattleMiniGame {
 		super.initCustomData();
 
 		Map<String, Object> data = getCustomData();
-		data.put("floorblock", Material.SNOW_BLOCK.name()); // Напольные блоки
+		data.put("block", Material.SNOW_BLOCK.name()); // Напольные блоки
 		data.put("tool", Material.STONE_SHOVEL.name()); // Предмет выдаваемый игроку
-		data.put("floorpos1", getLocation()); // пол
-		data.put("floorpos2", getLocation()); // пол
-		data.put("floorpos3", getLocation()); // пол
-		data.put("floorpos4", getLocation()); // пол
+		data.put("pos1", getLocation()); // пол
+		data.put("pos2", getLocation()); // пол
+		data.put("pos3", getLocation()); // пол
+		data.put("pos4", getLocation()); // пол
 	}
 
 	@Override
@@ -78,12 +82,12 @@ public class Spleef2 extends SoloBattleMiniGame {
 		super.loadCustomData();
 
 		Map<String, Object> data = getCustomData();
-		this.block = Material.valueOf((String) data.get("floorblock")); // Напольные блоки
+		this.block = Material.valueOf((String) data.get("block")); // Напольные блоки
 		this.tool = Material.valueOf((String) data.get("tool")); // Предмет выдаваемый игроку
-		this.floorpos1 = (Location) data.get("floorpos1"); // пол
-		this.floorpos2 = (Location) data.get("floorpos2"); // пол
-		this.floorpos3 = (Location) data.get("floorpos3"); // пол
-		this.floorpos4 = (Location) data.get("floorpos4"); // пол
+		this.pos1 = (Location) data.get("pos1"); // пол
+		this.pos2 = (Location) data.get("pos2"); // пол
+		this.pos3 = (Location) data.get("pos3"); // пол
+		this.pos4 = (Location) data.get("pos4"); // пол
 	}
 
 	@Override
@@ -94,21 +98,18 @@ public class Spleef2 extends SoloBattleMiniGame {
 		InventoryTool.addItemToPlayers(getPlayers(), new ItemStack(this.tool));
 	}
 	
-	private void fillWall1() {
-		BlockTool.fillBlockWithMaterial(floorpos1, floorpos3, block);
-	}
 	
 	private void fillStage1() { // Заполнитель 1 этаж
-		BlockTool.fillBlockWithMaterial(floorpos1, floorpos2, block);
+		BlockTool.fillBlockWithMaterial(pos1, pos2, block);
 	}
 	
-	private void fillStage2() { // Заполнитель 2 этаж
-		BlockTool.fillBlockWithMaterial(floorpos3, floorpos4, block);
+	private void fillStage2() { // Заполнитель 1 этаж
+		BlockTool.fillBlockWithMaterial(pos3, pos4, block);
 	}
 
 
 	private void checkFallenFromFloor(Player p) {
-		double bottomY = this.floorpos2.getY();
+		double bottomY = this.pos2.getY();
 		double playerY = p.getLocation().getY();
 
 		if (playerY <= bottomY) {
@@ -119,11 +120,59 @@ public class Spleef2 extends SoloBattleMiniGame {
 			setLive(p, false);
 		}
 	}
+	
+    public static void walls(Location pos1, Location pos2, Material block) {
+        World world = pos1.getWorld();
+        int pos1X = (int) pos1.getX();
+        int pos2X = (int) pos2.getX();
+        int pos1Y = (int) pos1.getY();
+        int pos2Y = (int) pos2.getY();
+        int pos1Z = (int) pos1.getZ();
+        int pos2Z = (int) pos2.getZ();
+
+        // разница
+        int dx = MathTool.getDiff(pos1X, pos2X);
+        int dy = MathTool.getDiff(pos1Y, pos2Y);
+        int dz = MathTool.getDiff(pos1Z, pos2Z);
+
+        // получение меньших x, y, z
+        int smallX = Math.min(pos1X, pos2X);
+        int smallY = Math.min(pos1Y, pos2Y);
+        int smallZ = Math.min(pos1Z, pos2Z);
+
+        // получение больших x, y, z
+        int bigX = Math.max(pos1X, pos2X);
+        int bigY = Math.max(pos1Y, pos2Y);
+        int bigZ = Math.max(pos1Z, pos2Z);
+
+        Location innerSmallPos = new Location(world, smallX + 1, smallY, smallZ + 1);
+        Location innerBigPos = new Location(world, bigX - 1, bigY, bigZ - 1);
+
+        Location loc = new Location(world, smallX, smallY, smallZ);
+        for (int y = 0; y <= dy; y++) {
+            for (int z = 0; z <= dz; z++) {
+                for (int x = 0; x <= dx; x++) {
+                    loc.add(x, y, z);
+
+                    // проверка внутренней границы
+                    if (!LocationTool.isIn(innerSmallPos, loc, innerBigPos)) {
+                        // set type
+                        loc.getBlock().setType(block);
+                    }
+
+                    // init
+                    loc.setX(smallX);
+                    loc.setY(smallY);
+                    loc.setZ(smallZ);
+                }
+            }
+        }
+    }
+	
 	@Override
 	protected void initGame() {
 		fillStage1();
 		fillStage2();
-		fillWall1();
 	}
 	@Override
 	protected void onEvent(Event event) { // Отслеживание поломки
@@ -132,7 +181,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 
 			Block block = e.getBlock();
 			
-			if(!(LocationTool.isIn(floorpos1, block.getLocation(), floorpos2) || LocationTool.isIn(floorpos3, block.getLocation(), floorpos4))) {
+			if(!(LocationTool.isIn(pos1, block.getLocation(), pos2) || LocationTool.isIn(pos3, block.getLocation(), pos4))) {
 				  return;
 				}
 
