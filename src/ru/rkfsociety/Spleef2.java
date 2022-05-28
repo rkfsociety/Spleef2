@@ -93,7 +93,7 @@ public class Spleef2 extends SoloBattleMiniGame {
 		BlockTool.fillBlockWithMaterial(pos1, pos2, block);
 	}
 	
-	private void fillStage2() { // Заполнитель 1 этаж
+	private void fillStage2() { // Заполнитель 2 этаж
 		BlockTool.fillBlockWithMaterial(pos3, pos4, block);
 	}
 
@@ -111,14 +111,14 @@ public class Spleef2 extends SoloBattleMiniGame {
 		}
 	}
 	
-    public static void walls(Location pos1, Location pos2, Material block) {
+    public static void walls(Location pos1, Location pos4, Material block) {
         World world = pos1.getWorld();
         int pos1X = (int) pos1.getX();
-        int pos2X = (int) pos2.getX();
+        int pos2X = (int) pos4.getX();
         int pos1Y = (int) pos1.getY();
-        int pos2Y = (int) pos2.getY();
+        int pos2Y = (int) pos4.getY();
         int pos1Z = (int) pos1.getZ();
-        int pos2Z = (int) pos2.getZ();
+        int pos2Z = (int) pos4.getZ();
 
         // разница
         int dx = MathTool.getDiff(pos1X, pos2X);
@@ -136,7 +136,7 @@ public class Spleef2 extends SoloBattleMiniGame {
         int bigZ = Math.max(pos1Z, pos2Z);
 
         Location innerSmallPos = new Location(world, smallX + 1, smallY, smallZ + 1);
-        Location innerBigPos = new Location(world, bigX - 1, bigY, bigZ - 1);
+        Location innerBigPos = new Location(world, bigX - 1, bigY + 5, bigZ - 1);
 
         Location loc = new Location(world, smallX, smallY, smallZ);
         for (int y = 0; y <= dy; y++) {
